@@ -1,0 +1,237 @@
+<mvc:View
+    controllerName="zfipkzup.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    displayBlock="true"
+>
+    <Page
+        id="mainPage"
+        title="Multiple-Type Document Upload"
+        showHeader="true"
+        class="sapUiContentPadding"
+    >
+        <content>
+            <f:GridContainer
+                id="_statGrid"
+                class="sapUiSmallMarginBottom"
+            >
+                <f:layout>
+                    <f:GridContainerSettings
+                        id="_gcs"
+                        rowSize="5rem"
+                        columnSize="11rem"
+                        gap="0.75rem"
+                    />
+                </f:layout>
+                <f:items>
+                    <GenericTile
+                        id="_statTotal"
+                        header="Tổng chứng từ"
+                        subheader="Đã upload"
+                        frameType="OneByOne"
+                    >
+                        <tileContent>
+                            <TileContent id="_tcTotal">
+                                <NumericContent
+                                    id="_ncTotal"
+                                    value="{stat>/total}"
+                                    valueColor="Good"
+                                    icon="sap-icon://documents"
+                                    withMargin="false"
+                                />
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    <GenericTile
+                        id="_statRecent"
+                        header="Gần đây nhất"
+                        subheader="{stat>/lastFile}"
+                        frameType="OneByOne"
+                    >
+                        <tileContent>
+                            <TileContent id="_tcRecent">
+                                <NumericContent
+                                    id="_ncRecent"
+                                    value="{stat>/lastDate}"
+                                    icon="sap-icon://history"
+                                    withMargin="false"
+                                    scale=""
+                                />
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                </f:items>
+            </f:GridContainer>
+
+            <Title
+                id="_mainTitle"
+                text="Chọn loại chứng từ cần upload"
+                level="H3"
+                class="sapUiMediumMarginBegin sapUiSmallMarginTopBottom"
+            />
+
+            <HBox
+                id="_cardBox"
+                wrap="Wrap"
+                class="sapUiSmallMarginBegin"
+            >
+                <!-- FI -->
+                <f:Card
+                    id="_cardFI"
+                    class="sapUiTinyMargin"
+                    width="20rem"
+                >
+                    <f:header>
+                        <card:Header
+                            xmlns:card="sap.f.cards"
+                            title="Upload Chứng từ FI"
+                            subtitle="Journal Entry / Kế toán tài chính"
+                            iconSrc="sap-icon://accounting-document-verification"
+                            iconDisplayShape="Square"
+                        />
+                    </f:header>
+                    <f:content>
+                        <VBox
+                            id="_fiContent"
+                            class="sapUiSmallMargin"
+                        >
+                            <ObjectStatus
+                                id="_fiStat"
+                                text="Sẵn sàng"
+                                state="Success"
+                                icon="sap-icon://status-positive"
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Text
+                                id="_fiDesc"
+                                text="Tải lên hàng loạt chứng từ kế toán từ file Excel."
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Button
+                                id="btnFI"
+                                text="Mở"
+                                type="Emphasized"
+                                press="onPressFI"
+                                icon="sap-icon://navigation-right-arrow"
+                                width="100%"
+                            />
+                        </VBox>
+                    </f:content>
+                </f:Card>
+
+                <!-- PP -->
+                <f:Card
+                    id="_cardPP"
+                    class="sapUiTinyMargin"
+                    width="20rem"
+                >
+                    <f:header>
+                        <card:Header
+                            xmlns:card="sap.f.cards"
+                            title="Upload Chứng từ PP"
+                            subtitle="Production / Sản xuất"
+                            iconSrc="sap-icon://factory"
+                            iconDisplayShape="Square"
+                        />
+                    </f:header>
+                    <f:content>
+                        <VBox
+                            id="_ppContent"
+                            class="sapUiSmallMargin"
+                        >
+                            <ObjectStatus
+                                id="_ppStat"
+                                text="Sẵn sàng"
+                                state="Success"
+                                icon="sap-icon://status-positive"
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Text
+                                id="_ppDesc"
+                                text="Tải lên hàng loạt lệnh sản xuất từ file Excel."
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Button
+                                id="btnPP"
+                                text="Mở"
+                                type="Emphasized"
+                                press="onPressPP"
+                                icon="sap-icon://navigation-right-arrow"
+                                width="100%"
+                            />
+                        </VBox>
+                    </f:content>
+                </f:Card>
+                <!-- GR -->
+<f:Card id="_cardGR" class="sapUiTinyMargin" width="20rem">
+    <f:header>
+        <card:Header xmlns:card="sap.f.cards"
+            title="Upload Phiếu Nhập Kho (GR)"
+            subtitle="Goods Receipt / Nhập kho theo PO"
+            iconSrc="sap-icon://inventory"
+            iconDisplayShape="Square" />
+    </f:header>
+    <f:content>
+        <VBox id="_grContent" class="sapUiSmallMargin">
+            <ObjectStatus id="_grStat" text="Sẵn sàng"
+                state="Success" icon="sap-icon://status-positive"
+                class="sapUiTinyMarginBottom" />
+            <Text id="_grDesc"
+                text="Upload hàng loạt phiếu nhập kho từ file Excel theo PO."
+                class="sapUiTinyMarginBottom" />
+            <Button id="btnGR" text="Mở" type="Emphasized"
+                press="onPressGR"
+                icon="sap-icon://navigation-right-arrow"
+                width="100%" />
+        </VBox>
+    </f:content>
+</f:Card>
+
+            </HBox>
+
+            <!-- Hướng dẫn nhanh -->
+            <Panel
+                id="_guidePanel"
+                headerText="Hướng dẫn nhanh"
+                expandable="true"
+                expanded="true"
+                class="sapUiSmallMargin"
+                width="auto"
+            >
+                <content>
+                    <List
+                        id="_guideList"
+                        showSeparators="Inner"
+                    >
+                        <StandardListItem
+                            id="_g1"
+                            title="1. Tải Template"
+                            description="Bấm 'Tải Template' để lấy file Excel mẫu."
+                            icon="sap-icon://download-from-cloud"
+                        />
+                        <StandardListItem
+                            id="_g2"
+                            title="2. Điền dữ liệu"
+                            description="Nhập chứng từ vào file theo đúng cột, mỗi ID Doc là một chứng từ."
+                            icon="sap-icon://edit"
+                        />
+                        <StandardListItem
+                            id="_g3"
+                            title="3. Chọn file"
+                            description="Bấm 'Chọn tài liệu...' và chọn file đã điền."
+                            icon="sap-icon://attachment"
+                        />
+                        <StandardListItem
+                            id="_g4"
+                            title="4. Check rồi Post"
+                            description="Bấm 'Check' để kiểm tra, sau đó 'Post' để ghi sổ."
+                            icon="sap-icon://post"
+                        />
+                    </List>
+                </content>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>

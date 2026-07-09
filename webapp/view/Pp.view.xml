@@ -1,0 +1,227 @@
+<mvc:View
+    controllerName="zfipkzup.controller.Pp"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:u="sap.ui.unified"
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    displayBlock="true">
+
+    <Page id="ppPage" title="Upload Lệnh Sản Xuất (PP)" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <IconTabBar id="idIconTabBarPp" expanded="true" headerMode="Inline" stretchContentHeight="true">
+                <items>
+                    <!-- ===== TAB UPLOAD ===== -->
+                    <IconTabFilter id="ppUploadTab" key="upload" text="Upload" icon="sap-icon://upload"
+                        class="sapUiResponsiveContentPadding">
+
+                        <core:Fragment fragmentName="zfipkzup.view.fragment.Busy" type="XML" />
+
+                        <table:Table id="ppTableUpload"
+                            selectionMode="None"
+                            visibleRowCountMode="Interactive"
+                            rows="{ppUploadModel>/items}">
+                            <table:extension>
+                                <OverflowToolbar id="ppToolbar">
+                                    <Title id="ppTitle" text="Dòng dữ liệu" />
+                                    <ToolbarSeparator id="_ppSep1" />
+                                    <u:FileUploader id="ppFileUploader"
+                                        name="ppFileUpload"
+                                        width="400px"
+                                        fileType="xls,xlsx"
+                                        sendXHR="true"
+                                        useMultipart="false"
+                                        change="onFileChange"
+                                        class="sapUiTinyMarginEnd"
+                                        buttonText="Chọn tài liệu..." />
+                                    <ToolbarSeparator id="_ppSep2" />
+                                    <Button id="_ppBtnDl" text="Tải Template"
+                                        icon="sap-icon://download-from-cloud"
+                                        press="onDownloadTemplate" type="Attention" />
+                                    <ToolbarSpacer id="_ppSpacer" />
+                                    <Button id="ppCheckButton" text="Check"
+                                        icon="sap-icon://checklist"
+                                        press="onCheck" enabled="false"
+                                        type="Neutral" class="sapUiTinyMarginEnd" />
+                                    <Button id="ppPostButton" text="Post"
+                                        icon="sap-icon://post"
+                                        press="onPost" enabled="false"
+                                        type="Success" class="sapUiTinyMarginEnd" />
+                                    <Button id="ppBtnClear" text="Clear"
+                                        icon="sap-icon://clear-all"
+                                        press="onClearUpload"
+                                        type="Transparent"
+                                        tooltip="Xóa dữ liệu đã upload, chọn file mới" />
+                                </OverflowToolbar>
+                            </table:extension>
+
+                            <table:noData>
+                                <IllustratedMessage id="_ppNoData" enableVerticalResponsiveness="true"
+                                    title="Chưa có dữ liệu"
+                                    description="Tải Template, điền lệnh sản xuất rồi chọn file để upload" />
+                            </table:noData>
+
+                            <table:columns>
+                                <table:Column id="ppColStatus" width="14rem" hAlign="Begin">
+                                    <Label id="_ppL0" text="Status" />
+                                    <table:template>
+                                        <ObjectStatus id="_ppT0"
+                                            icon="{ppUploadModel>exceptionIcon}"
+                                            text="{ppUploadModel>exceptionText}"
+                                            state="{ppUploadModel>exceptionState}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColProdOrder" width="10rem" hAlign="Begin">
+                                    <Label id="_ppL1" text="Production Order" />
+                                    <table:template>
+                                        <Text id="_ppT1" text="{ppUploadModel>productionorder}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColIdDoc" width="5rem" hAlign="Center">
+                                    <Label id="_ppL2" text="ID" />
+                                    <table:template>
+                                        <Text id="_ppT2" text="{ppUploadModel>id_doc}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColOrderType" width="7rem" hAlign="Center">
+                                    <Label id="_ppL3" text="Order Type" />
+                                    <table:template>
+                                        <Text id="_ppT3" text="{ppUploadModel>ordertype}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColPlant" width="6rem" hAlign="Center">
+                                    <Label id="_ppL4" text="Plant" />
+                                    <table:template>
+                                        <Text id="_ppT4" text="{ppUploadModel>productionplant}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColMaterial" width="11rem" hAlign="Begin">
+                                    <Label id="_ppL5" text="Material" />
+                                    <table:template>
+                                        <Text id="_ppT5" text="{ppUploadModel>material}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColVer" width="7rem" hAlign="Center">
+                                    <Label id="_ppL6" text="Prod. Version" />
+                                    <table:template>
+                                        <Text id="_ppT6" text="{ppUploadModel>productionversion}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColQty" width="7rem" hAlign="End">
+                                    <Label id="_ppL7" text="Total Qty" />
+                                    <table:template>
+                                        <Text id="_ppT7" text="{ppUploadModel>totalqty}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColUnit" width="6rem" hAlign="Center">
+                                    <Label id="_ppL8" text="Base Unit" />
+                                    <table:template>
+                                        <Text id="_ppT8" text="{ppUploadModel>baseunit}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColStart" width="9rem" hAlign="Center">
+                                    <Label id="_ppL9" text="Start Basic Date" />
+                                    <table:template>
+                                        <ObjectStatus id="_ppT9"
+                                            text="{ppUploadModel>datestart}"
+                                            state="{ppUploadModel>datestartState}"
+                                            icon="{ppUploadModel>datestartIcon}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColEnd" width="9rem" hAlign="Center">
+                                    <Label id="_ppL10" text="End Basic Date" />
+                                    <table:template>
+                                        <ObjectStatus id="_ppT10"
+                                            text="{ppUploadModel>dateend}"
+                                            state="{ppUploadModel>dateendState}"
+                                            icon="{ppUploadModel>dateendIcon}" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColSO" width="9rem" hAlign="Begin">
+                                    <Label id="_ppL11" text="Sales Order" />
+                                    <table:template>
+                                        <Text id="_ppT11" text="{ppUploadModel>saleorder}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColSOItem" width="8rem" hAlign="Center">
+                                    <Label id="_ppL12" text="SO Item" />
+                                    <table:template>
+                                        <Text id="_ppT12" text="{ppUploadModel>saleorderitem}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column id="ppColNote" width="14rem" hAlign="Begin">
+                                    <Label id="_ppL13" text="Note" />
+                                    <table:template>
+                                        <Text id="_ppT13" text="{ppUploadModel>longtext}" wrapping="false" />
+                                    </table:template>
+                                </table:Column>
+                            </table:columns>
+                        </table:Table>
+                    </IconTabFilter>
+
+                    <IconTabSeparator id="_ppTabSep" />
+
+                    <!-- ===== TAB HISTORY (sap.m.Table bind V4 model "pp") =====
+                         Field PascalCase theo CDS ZPP_I_ZUPLSX — đối chiếu tên element
+                         thực tế trong CDS của anh, lệch thì sửa path. -->
+                    <IconTabFilter id="ppHistoryTab" key="history" text="Lịch sử" icon="sap-icon://history">
+                        <Table id="ppHistoryTable"
+                            inset="false"
+                            growing="true"
+                            growingThreshold="50"
+                            mode="None"
+                            items="{
+                                path: 'pp>/UploadHistory',
+                                parameters: { '$orderby': 'StartDate desc' }
+                            }">
+                            <headerToolbar>
+                                <OverflowToolbar id="_ppHistTb">
+                                    <Title id="_ppHistTitle" text="Lệnh Sản Xuất Đã Upload" />
+                                    <ToolbarSpacer id="_ppHistSpacer" />
+                                    <Button id="_ppHistRefresh" icon="sap-icon://refresh" press="onRefreshHistory" />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="_pphc1"><Text id="_ppht1" text="ID" /></Column>
+                                <Column id="_pphc2"><Text id="_ppht2" text="Production Order" /></Column>
+                                <Column id="_pphc3"><Text id="_ppht3" text="Plant" /></Column>
+                                <Column id="_pphc4"><Text id="_ppht4" text="Material" /></Column>
+                                <Column id="_pphc5"><Text id="_ppht5" text="Prod. Version" /></Column>
+                                <Column id="_pphc6"><Text id="_ppht6" text="Total Qty" /></Column>
+                                <Column id="_pphc7"><Text id="_ppht7" text="Start Date" /></Column>
+                                <Column id="_pphc8"><Text id="_ppht8" text="End Date" /></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem id="_pphcli">
+                                    <cells>
+                                        <Text id="_pphcell1" text="{pp>IdDoc}" />
+                                        <Text id="_pphcell2" text="{pp>ProductionOrder}" />
+                                        <Text id="_pphcell3" text="{pp>ProductionPlant}" />
+                                        <Text id="_pphcell4" text="{pp>Material}" />
+                                        <Text id="_pphcell5" text="{pp>ProductionVersion}" />
+                                        <Text id="_pphcell6" text="{pp>TotalQty}" />
+                                        <Text id="_pphcell7" text="{pp>StartDate}" />
+                                        <Text id="_pphcell8" text="{pp>EndDate}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Page>
+</mvc:View>
