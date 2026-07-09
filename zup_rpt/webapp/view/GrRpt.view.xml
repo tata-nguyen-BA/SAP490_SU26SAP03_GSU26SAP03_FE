@@ -1,0 +1,141 @@
+<mvc:View controllerName="zuprpt.controller.GrRpt"
+    xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f"
+    xmlns:core="sap.ui.core" xmlns:table="sap.ui.table" displayBlock="true">
+
+    <Page id="grRptPage" title="GR Upload Analytics"
+        showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <core:Fragment fragmentName="zuprpt.view.fragment.Busy" type="XML" />
+
+            <!-- FILTER BAR -->
+            <Panel id="grFilterPanel" class="sapUiSmallMargin" width="auto">
+                <content>
+                    <HBox id="_grfBox" wrap="Wrap" alignItems="End">
+                        <VBox id="_gf1" class="sapUiTinyMarginEnd">
+                            <Label id="_gfl1" text="Created At" />
+                            <DateRangeSelection id="grDateRange" width="18rem"
+                                displayFormat="dd/MM/yyyy" valueFormat="yyyy-MM-dd" />
+                        </VBox>
+                        <VBox id="_gf2" class="sapUiTinyMarginEnd">
+                            <Label id="_gfl2" text="Status" />
+                            <Select id="grStatus" width="10rem">
+                                <core:Item id="_gs0" key="" text="Tất cả" />
+                                <core:Item id="_gs1" key="S" text="S — Success" />
+                                <core:Item id="_gs2" key="E" text="E — Error" />
+                                <core:Item id="_gs3" key="R" text="R — Ready" />
+                                <core:Item id="_gs4" key="P" text="P — Pending" />
+                            </Select>
+                        </VBox>
+                        <VBox id="_gf3" class="sapUiTinyMarginEnd">
+                            <Label id="_gfl3" text="Created By" />
+                            <Input id="grCreatedBy" width="10rem" placeholder="username" />
+                        </VBox>
+                        <Button id="grBtnGo" text="Go" type="Emphasized" press="onGo"
+                            icon="sap-icon://search" class="sapUiTinyMarginEnd" />
+                        <Button id="grBtnClear" text="Clear" press="onClearFilters"
+                            icon="sap-icon://clear-filter" />
+                    </HBox>
+                </content>
+            </Panel>
+
+            <!-- KPI -->
+            <f:GridContainer id="grKpiGrid" class="sapUiSmallMarginBegin sapUiSmallMarginBottom">
+                <f:layout>
+                    <f:GridContainerSettings id="_gkgcs" rowSize="5rem" columnSize="11rem" gap="0.75rem" />
+                </f:layout>
+                <f:items>
+                    <GenericTile id="_gk1" header="Tổng GR" frameType="OneByOne">
+                        <tileContent><TileContent id="_gkt1">
+                            <NumericContent id="_gkn1" value="{rpt>/kpi/total}"
+                                withMargin="false" icon="sap-icon://inventory" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_gk2" header="Thành công" frameType="OneByOne">
+                        <tileContent><TileContent id="_gkt2">
+                            <NumericContent id="_gkn2" value="{rpt>/kpi/success}"
+                                valueColor="Good" withMargin="false" icon="sap-icon://accept" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_gk3" header="Lỗi" frameType="OneByOne">
+                        <tileContent><TileContent id="_gkt3">
+                            <NumericContent id="_gkn3" value="{rpt>/kpi/error}"
+                                valueColor="Critical" withMargin="false" icon="sap-icon://error" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_gk4" header="Đang xử lý" frameType="OneByOne">
+                        <tileContent><TileContent id="_gkt4">
+                            <NumericContent id="_gkn4" value="{rpt>/kpi/pending}"
+                                valueColor="Neutral" withMargin="false" icon="sap-icon://pending" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                </f:items>
+            </f:GridContainer>
+
+            <!-- CHART -->
+            <Panel id="grChartPanel" class="sapUiSmallMargin" expandable="true"
+                expanded="true" width="auto">
+                <headerToolbar>
+                    <OverflowToolbar id="_grcTb">
+                        <Title id="_grcTitle" text="Phân tích nhanh" />
+                        <ToolbarSpacer id="_grcSp" />
+                        <Label id="_grcLblD" text="Nhóm theo:" class="sapUiTinyMarginEnd" />
+                        <Select id="grChartDim" selectedKey="status" change="onChartConfigChange">
+                            <core:Item id="_grcd0" key="status" text="Status" />
+                            <core:Item id="_grcd1" key="month" text="Tháng" />
+                            <core:Item id="_grcd2" key="user" text="Created By" />
+                        </Select>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <content>
+                    <ScrollContainer id="_grChartScroll" horizontal="true" vertical="false" width="100%">
+                        <core:HTML id="grChartHtml" />
+                    </ScrollContainer>
+                </content>
+            </Panel>
+
+            <!-- TABLE -->
+            <table:Table id="grRptTable" selectionMode="None"
+                visibleRowCountMode="Interactive" class="sapUiSmallMargin"
+                rows="{rpt>/rows}">
+                <table:extension>
+                    <OverflowToolbar id="_grTb">
+                        <Title id="_grTbTitle" text="GR Uploads ({rpt>/kpi/total})" />
+                        <ToolbarSpacer id="_grTbSp" />
+                        <Button id="grBtnExport" text="Xuất Excel" type="Accept"
+                            icon="sap-icon://excel-attachment" press="onExport" />
+                    </OverflowToolbar>
+                </table:extension>
+                <table:noData>
+                    <IllustratedMessage id="_grNoData" enableVerticalResponsiveness="true"
+                        title="Chưa có dữ liệu" description="Điều chỉnh bộ lọc rồi bấm Go" />
+                </table:noData>
+                <table:columns>
+                    <table:Column id="_grc1" width="10rem"><Label id="_gcl1" text="GR Number" />
+                        <table:template><Text id="_gct1" text="{rpt>GrNumber}" wrapping="false" /></table:template>
+                    </table:Column>
+                    <table:Column id="_grc2" width="9rem"><Label id="_gcl2" text="Status" />
+                        <table:template>
+                            <ObjectStatus id="_gct2" text="{rpt>Status}"
+                                state="{path: 'rpt>StatusCriticality', formatter: '.formatter.criticalityToState'}" />
+                        </table:template>
+                    </table:Column>
+                    <table:Column id="_grc3" width="9rem"><Label id="_gcl3" text="Doc. Date" />
+                        <table:template><Text id="_gct3" text="{path: 'rpt>DocumentDate', formatter: '.formatter.date'}" wrapping="false" /></table:template>
+                    </table:Column>
+                    <table:Column id="_grc4" width="12rem"><Label id="_gcl4" text="Mat. Document" />
+                        <table:template><Text id="_gct4" text="{rpt>MaterialDocument}" wrapping="false" /></table:template>
+                    </table:Column>
+                    <table:Column id="_grc5" width="20rem"><Label id="_gcl5" text="Message" />
+                        <table:template><Text id="_gct5" text="{rpt>Message}" wrapping="false" /></table:template>
+                    </table:Column>
+                    <table:Column id="_grc6" width="10rem"><Label id="_gcl6" text="Created By" />
+                        <table:template><Text id="_gct6" text="{rpt>CreatedBy}" wrapping="false" /></table:template>
+                    </table:Column>
+                    <table:Column id="_grc7" width="12rem"><Label id="_gcl7" text="Created At" />
+                        <table:template><Text id="_gct7" text="{path: 'rpt>CreatedAt', formatter: '.formatter.date'}" wrapping="false" /></table:template>
+                    </table:Column>
+                </table:columns>
+            </table:Table>
+        </content>
+    </Page>
+</mvc:View>

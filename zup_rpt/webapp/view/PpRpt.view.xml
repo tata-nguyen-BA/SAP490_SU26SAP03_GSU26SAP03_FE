@@ -1,0 +1,181 @@
+<mvc:View
+    controllerName="zuprpt.controller.PpRpt"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
+    xmlns:table="sap.ui.table"
+    displayBlock="true">
+
+    <Page id="ppRptPage" title="PP Upload Analytics" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <core:Fragment fragmentName="zuprpt.view.fragment.Busy" type="XML" />
+
+            <!-- ===== FILTER BAR ===== -->
+            <Panel id="ppFilterPanel" class="sapUiSmallMargin" width="auto">
+                <content>
+                    <HBox id="_pbFilterBox" wrap="Wrap" alignItems="End">
+                        <VBox id="_pb1" class="sapUiTinyMarginEnd">
+                            <Label id="_pl1" text="Posting Date (log)" />
+                            <DateRangeSelection id="ppDateRange" width="18rem"
+                                displayFormat="dd/MM/yyyy" valueFormat="yyyy-MM-dd" />
+                        </VBox>
+                        <VBox id="_pb2" class="sapUiTinyMarginEnd">
+                            <Label id="_pl2" text="Plant" />
+                            <Input id="ppPlant" width="7rem" placeholder="vd: ZLA1" />
+                        </VBox>
+                        <VBox id="_pb3" class="sapUiTinyMarginEnd">
+                            <Label id="_pl3" text="Order Type" />
+                            <Input id="ppOrderType" width="7rem" placeholder="vd: PP01" />
+                        </VBox>
+                        <VBox id="_pb4" class="sapUiTinyMarginEnd">
+                            <Label id="_pl4" text="Material (chứa)" />
+                            <Input id="ppMaterial" width="12rem" placeholder="vd: F25" />
+                        </VBox>
+                        <VBox id="_pb5" class="sapUiTinyMarginEnd">
+                            <Label id="_pl5" text="Trạng thái lệnh" />
+                            <Select id="ppStatus" width="10rem">
+                                <core:Item id="_ps0" key="" text="Tất cả" />
+                                <core:Item id="_ps1" key="Created" text="Created" />
+                                <core:Item id="_ps2" key="Released" text="Released" />
+                                <core:Item id="_ps3" key="Completed" text="Completed" />
+                                <core:Item id="_ps4" key="Closed" text="Closed" />
+                                <core:Item id="_ps5" key="N/A" text="N/A" />
+                            </Select>
+                        </VBox>
+                        <Button id="ppBtnGo" text="Go" type="Emphasized" press="onGo"
+                            icon="sap-icon://search" class="sapUiTinyMarginEnd" />
+                        <Button id="ppBtnClear" text="Clear" press="onClearFilters"
+                            icon="sap-icon://clear-filter" />
+                    </HBox>
+                </content>
+            </Panel>
+
+            <!-- ===== KPI ===== -->
+            <f:GridContainer id="ppKpiGrid" class="sapUiSmallMarginBegin sapUiSmallMarginBottom">
+                <f:layout>
+                    <f:GridContainerSettings id="_pkgcs" rowSize="5rem" columnSize="11rem" gap="0.75rem" />
+                </f:layout>
+                <f:items>
+                    <GenericTile id="_pk1" header="Tổng lệnh SX" frameType="OneByOne">
+                        <tileContent><TileContent id="_pkt1">
+                            <NumericContent id="_pkn1" value="{rpt>/kpi/orderCount}" withMargin="false"
+                                icon="sap-icon://factory" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_pk2" header="Tổng số lượng" frameType="OneByOne">
+                        <tileContent><TileContent id="_pkt2">
+                            <NumericContent id="_pkn2" value="{rpt>/kpi/totalQty}" withMargin="false"
+                                icon="sap-icon://product" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_pk3" header="Số plant" frameType="OneByOne">
+                        <tileContent><TileContent id="_pkt3">
+                            <NumericContent id="_pkn3" value="{rpt>/kpi/plantCount}" withMargin="false"
+                                icon="sap-icon://building" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_pk4" header="Lead time TB (ngày)" frameType="OneByOne">
+                        <tileContent><TileContent id="_pkt4">
+                            <NumericContent id="_pkn4" value="{rpt>/kpi/avgLeadTime}" withMargin="false"
+                                icon="sap-icon://date-time" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                    <GenericTile id="_pk5" header="Đã release" subheader="Released trở lên" frameType="OneByOne">
+                        <tileContent><TileContent id="_pkt5">
+                            <NumericContent id="_pkn5" value="{rpt>/kpi/releasedCount}" withMargin="false"
+                                icon="sap-icon://accept" />
+                        </TileContent></tileContent>
+                    </GenericTile>
+                </f:items>
+            </f:GridContainer>
+
+            <!-- ===== CHART: số lượng theo plant ===== -->
+            <Panel id="ppChartPanel" class="sapUiSmallMargin" expandable="true" expanded="true" width="auto">
+                <headerToolbar>
+                    <OverflowToolbar id="_ppcTb">
+                        <Title id="_ppcTitle" text="Phân tích nhanh" />
+                        <ToolbarSpacer id="_ppcSp" />
+                        <Label id="_ppcLblD" text="Nhóm theo:" class="sapUiTinyMarginEnd" />
+                        <Select id="ppChartDim" selectedKey="plant" change="onChartConfigChange">
+                                <core:Item id="_ppcd0" key="plant" text="Plant" />
+                                <core:Item id="_ppcd1" key="ordertype" text="Order Type" />
+                                <core:Item id="_ppcd2" key="material" text="Material" />
+                                <core:Item id="_ppcd3" key="status" text="Trạng thái" />
+                                <core:Item id="_ppcd4" key="month" text="Tháng" />
+                        </Select>
+                        <Label id="_ppcLblM" text="Giá trị:" class="sapUiTinyMarginBeginEnd" />
+                        <Select id="ppChartMeasure" selectedKey="count" change="onChartConfigChange">
+                                <core:Item id="_ppcm0" key="count" text="Số lệnh" />
+                                <core:Item id="_ppcm1" key="qty" text="Tổng Qty" />
+                        </Select>
+                    </OverflowToolbar>
+                </headerToolbar>
+                <content>
+                    <ScrollContainer id="_ppChartScroll" horizontal="true" vertical="false" width="100%">
+                        <core:HTML id="ppChartHtml" />
+                    </ScrollContainer>
+                </content>
+            </Panel>
+
+            <!-- ===== TABLE ===== -->
+            <table:Table id="ppRptTable"
+                selectionMode="None"
+                visibleRowCountMode="Interactive"
+                class="sapUiSmallMargin"
+                rows="{rpt>/rows}">
+                <table:extension>
+                    <OverflowToolbar id="_ppTb">
+                        <Title id="_ppTbTitle" text="Lệnh sản xuất ({rpt>/kpi/orderCount})" />
+                        <ToolbarSpacer id="_ppTbSp" />
+                        <Button id="ppBtnExport" text="Xuất Excel" type="Accept"
+                            icon="sap-icon://excel-attachment" press="onExport" />
+                    </OverflowToolbar>
+                </table:extension>
+                <table:noData>
+                    <IllustratedMessage id="_ppNoData" enableVerticalResponsiveness="true"
+                        title="Chưa có dữ liệu" description="Điều chỉnh bộ lọc rồi bấm Go" />
+                </table:noData>
+                <table:columns>
+                    <table:Column id="_pc1" width="10rem"><Label id="_pcl1" text="Production Order" />
+                        <table:template><Text id="_pct1" text="{rpt>ProductionOrder}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc17" width="8rem"><Label id="_pcl17" text="Trạng thái" />
+                        <table:template><ObjectStatus id="_pct17" text="{rpt>OrderStatus}"
+                            state="{path: 'rpt>OrderStatus', formatter: '.formatter.ppStatusState'}" /></table:template></table:Column>
+                    <table:Column id="_pc18" width="8rem"><Label id="_pcl18" text="Release Date" />
+                        <table:template><Text id="_pct18" text="{path: 'rpt>ReleaseDate', formatter: '.formatter.date'}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc2" width="5rem"><Label id="_pcl2" text="ID" />
+                        <table:template><Text id="_pct2" text="{rpt>IdDoc}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc3" width="6rem"><Label id="_pcl3" text="Plant" />
+                        <table:template><Text id="_pct3" text="{rpt>ProductionPlant}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc4" width="10rem"><Label id="_pcl4" text="Material" />
+                        <table:template><Text id="_pct4" text="{rpt>Material}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc5" width="7rem"><Label id="_pcl5" text="Order Type" />
+                        <table:template><Text id="_pct5" text="{rpt>ProductionOrderType}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc6" width="6rem"><Label id="_pcl6" text="Version" />
+                        <table:template><Text id="_pct6" text="{rpt>ProductionVersion}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc7" width="7rem" hAlign="End"><Label id="_pcl7" text="Qty" />
+                        <table:template><Text id="_pct7" text="{path: 'rpt>TotalQty', formatter: '.formatter.qty'}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc8" width="5rem"><Label id="_pcl8" text="Unit" />
+                        <table:template><Text id="_pct8" text="{rpt>BaseUnit}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc9" width="8rem"><Label id="_pcl9" text="Start Date" />
+                        <table:template><Text id="_pct9" text="{path: 'rpt>StartDate', formatter: '.formatter.date'}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc10" width="8rem"><Label id="_pcl10" text="End Date" />
+                        <table:template><Text id="_pct10" text="{path: 'rpt>EndDate', formatter: '.formatter.date'}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc11" width="7rem" hAlign="End"><Label id="_pcl11" text="Lead (ngày)" />
+                        <table:template><Text id="_pct11" text="{rpt>LeadTimeDays}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc12" width="9rem"><Label id="_pcl12" text="Sales Order" />
+                        <table:template><Text id="_pct12" text="{rpt>SalesOrder}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc13" width="7rem"><Label id="_pcl13" text="SO Item" />
+                        <table:template><Text id="_pct13" text="{rpt>SalesOrderItem}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc14" width="16rem"><Label id="_pcl14" text="Filename" />
+                        <table:template><Text id="_pct14" text="{rpt>Filename}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc15" width="8rem"><Label id="_pcl15" text="Pst Date" />
+                        <table:template><Text id="_pct15" text="{path: 'rpt>PstDate', formatter: '.formatter.date'}" wrapping="false" /></table:template></table:Column>
+                    <table:Column id="_pc16" width="8rem"><Label id="_pcl16" text="Posted By" />
+                        <table:template><Text id="_pct16" text="{rpt>PstUser}" wrapping="false" /></table:template></table:Column>
+                </table:columns>
+            </table:Table>
+        </content>
+    </Page>
+</mvc:View>

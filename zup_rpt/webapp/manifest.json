@@ -1,0 +1,160 @@
+{
+  "_version": "1.48.0",
+  "sap.app": {
+    "id": "zuprpt",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata4/sap/zup_ui_rpt_o4/srvd/sap/zup_ui_rpt/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "UploadAnalytics-display": {
+          "semanticObject": "UploadAnalytics",
+          "action": "display",
+          "title": "{{appTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.108.33",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ui.table": {},
+        "sap.ui.layout": {},
+        "sap.f": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zuprpt.i18n.i18n",
+          "supportedLocales": [
+            ""
+          ],
+          "fallbackLocale": ""
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "zuprpt.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteMain",
+          "pattern": ":?query:",
+          "target": [
+            "TargetMain"
+          ]
+        },
+        {
+          "name": "RouteFiRpt",
+          "pattern": "firpt",
+          "target": [
+            "TargetFiRpt"
+          ]
+        },
+        {
+          "name": "RoutePpRpt",
+          "pattern": "pprpt",
+          "target": [
+            "TargetPpRpt"
+          ]
+        },
+        {
+          "name": "RouteGrRpt",
+          "pattern": "grrpt",
+          "target": [
+            "TargetGrRpt"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetMain": {
+          "viewType": "XML",
+          "transition": "slide",
+          "viewId": "Main",
+          "viewName": "Main"
+        },
+        "TargetFiRpt": {
+          "viewType": "XML",
+          "transition": "slide",
+          "viewId": "FiRpt",
+          "viewName": "FiRpt"
+        },
+        "TargetPpRpt": {
+          "viewType": "XML",
+          "transition": "slide",
+          "viewId": "PpRpt",
+          "viewName": "PpRpt"
+        },
+        "TargetGrRpt": {
+          "viewType": "XML",
+          "transition": "slide",
+          "viewId": "GrRpt",
+          "viewName": "GrRpt"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "zuprpt.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "zuprpt"
+  }
+}

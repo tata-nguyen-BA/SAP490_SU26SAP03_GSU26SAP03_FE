@@ -1,0 +1,247 @@
+<mvc:View
+    controllerName="zuprpt.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    displayBlock="true"
+>
+    <Page
+        id="mainPage"
+        title="Upload Analytics &amp; Reporting"
+        showHeader="true"
+        class="sapUiContentPadding"
+    >
+        <content>
+            <f:GridContainer
+                id="_statGrid"
+                class="sapUiSmallMarginBottom"
+            >
+                <f:layout>
+                    <f:GridContainerSettings
+                        id="_gcs"
+                        rowSize="5rem"
+                        columnSize="11rem"
+                        gap="0.75rem"
+                    />
+                </f:layout>
+                <f:items>
+                    <GenericTile
+                        id="_statFi"
+                        header="Chứng từ FI"
+                        subheader="Đã upload"
+                        frameType="OneByOne"
+                    >
+                        <tileContent>
+                            <TileContent id="_tcFi">
+                                <NumericContent
+                                    id="_ncFi"
+                                    value="{stat>/fiTotal}"
+                                    valueColor="Good"
+                                    icon="sap-icon://accounting-document-verification"
+                                    withMargin="false"
+                                />
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    <GenericTile
+                        id="_statPp"
+                        header="Lệnh SX (PP)"
+                        subheader="Đã upload"
+                        frameType="OneByOne"
+                    >
+                        <tileContent>
+                            <TileContent id="_tcPp">
+                                <NumericContent
+                                    id="_ncPp"
+                                    value="{stat>/ppTotal}"
+                                    valueColor="Good"
+                                    icon="sap-icon://factory"
+                                    withMargin="false"
+                                />
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                    <GenericTile
+                        id="_statGr"
+                        header="GR Nhập kho"
+                        subheader="Đã upload"
+                        frameType="OneByOne"
+                    >
+                        <tileContent>
+                            <TileContent id="_tcGr">
+                                <NumericContent
+                                    id="_ncGr"
+                                    value="{stat>/grTotal}"
+                                    valueColor="Good"
+                                    icon="sap-icon://inventory"
+                                    withMargin="false"
+                                />
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+                </f:items>
+            </f:GridContainer>
+
+            <Title
+                id="_mainTitle"
+                text="Chọn báo cáo"
+                level="H3"
+                class="sapUiMediumMarginBegin sapUiSmallMarginTopBottom"
+            />
+
+            <HBox
+                id="_cardBox"
+                wrap="Wrap"
+                class="sapUiSmallMarginBegin"
+            >
+                <f:Card
+                    id="_cardFI"
+                    class="sapUiTinyMargin"
+                    width="20rem"
+                >
+                    <f:header>
+                        <card:Header
+                            xmlns:card="sap.f.cards"
+                            title="FI Upload Analytics"
+                            subtitle="Chứng từ kế toán đã post"
+                            iconSrc="sap-icon://money-bills"
+                            iconDisplayShape="Square"
+                        />
+                    </f:header>
+                    <f:content>
+                        <VBox
+                            id="_fiContent"
+                            class="sapUiSmallMargin"
+                        >
+                            <Text
+                                id="_fiDesc"
+                                text="Thống kê, lọc và xuất Excel các chứng từ FI đã upload."
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Button
+                                id="btnFI"
+                                text="Mở"
+                                type="Emphasized"
+                                press="onPressFiRpt"
+                                icon="sap-icon://navigation-right-arrow"
+                                width="100%"
+                            />
+                        </VBox>
+                    </f:content>
+                </f:Card>
+
+                <f:Card
+                    id="_cardPP"
+                    class="sapUiTinyMargin"
+                    width="20rem"
+                >
+                    <f:header>
+                        <card:Header
+                            xmlns:card="sap.f.cards"
+                            title="PP Upload Analytics"
+                            subtitle="Lệnh sản xuất đã tạo"
+                            iconSrc="sap-icon://Chart-Tree-Map"
+                            iconDisplayShape="Square"
+                        />
+                    </f:header>
+                    <f:content>
+                        <VBox
+                            id="_ppContent"
+                            class="sapUiSmallMargin"
+                        >
+                            <Text
+                                id="_ppDesc"
+                                text="Thống kê, lọc và xuất Excel các lệnh sản xuất đã upload."
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Button
+                                id="btnPP"
+                                text="Mở"
+                                type="Emphasized"
+                                press="onPressPpRpt"
+                                icon="sap-icon://navigation-right-arrow"
+                                width="100%"
+                            />
+                        </VBox>
+                    </f:content>
+                </f:Card>
+                <f:Card
+                    id="_cardGR"
+                    class="sapUiTinyMargin"
+                    width="20rem"
+                >
+                    <f:header>
+                        <card:Header
+                            xmlns:card="sap.f.cards"
+                            title="GR Upload Analytics"
+                            subtitle="Phiếu nhập kho đã upload"
+                            iconSrc="sap-icon://inventory"
+                            iconDisplayShape="Square"
+                        />
+                    </f:header>
+                    <f:content>
+                        <VBox
+                            id="_grContent"
+                            class="sapUiSmallMargin"
+                        >
+                            <Text
+                                id="_grDesc"
+                                text="Theo dõi trạng thái GR, lọc theo Status và ngày."
+                                class="sapUiTinyMarginBottom"
+                            />
+                            <Button
+                                id="btnGR"
+                                text="Mở"
+                                type="Emphasized"
+                                press="onPressGrRpt"
+                                icon="sap-icon://navigation-right-arrow"
+                                width="100%"
+                            />
+                        </VBox>
+                    </f:content>
+                </f:Card>
+            </HBox>
+
+            <Panel
+                id="_guidePanel"
+                headerText="Hướng dẫn nhanh"
+                expandable="true"
+                expanded="true"
+                class="sapUiSmallMargin"
+                width="auto"
+            >
+                <content>
+                    <List
+                        id="_guideList"
+                        showSeparators="Inner"
+                    >
+                        <StandardListItem
+                            id="_g1"
+                            title="1. Chọn báo cáo"
+                            description="FI Analytics cho chứng từ kế toán, PP Analytics cho lệnh sản xuất."
+                            icon="sap-icon://choropleth-chart"
+                        />
+                        <StandardListItem
+                            id="_g2"
+                            title="2. Lọc dữ liệu"
+                            description="Mặc định tải 30 ngày gần nhất theo Posting Date. Điều chỉnh bộ lọc rồi bấm Go."
+                            icon="sap-icon://filter"
+                        />
+                        <StandardListItem
+                            id="_g3"
+                            title="3. Xem KPI + bảng"
+                            description="KPI tính trên đúng tập dữ liệu đang lọc."
+                            icon="sap-icon://kpi-managing-my-area"
+                        />
+                        <StandardListItem
+                            id="_g4"
+                            title="4. Xuất Excel"
+                            description="File gồm sheet Summary (tiêu chí + KPI) và sheet Data."
+                            icon="sap-icon://excel-attachment"
+                        />
+                    </List>
+                </content>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>
