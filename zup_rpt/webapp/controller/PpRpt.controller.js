@@ -24,7 +24,8 @@ sap.ui.define(
     ) {
         "use strict";
 
-        const MAX_ROWS = 5000;
+        const PAGE_SIZE = 5000;    // mỗi lượt request OData
+        const HARD_LIMIT = 50000;  // trần an toàn phía client, vượt thì yêu cầu thu hẹp filter
         // Trạng thái tính là "đã release" (Released trở lên)
         const RELEASED_SET = { Released: true, Completed: true, Closed: true };
 
@@ -118,24 +119,53 @@ sap.ui.define(
                     const oBinding = oModel.bindList(
                         "/PPUploadReport", null, [],
                         this._buildFilters(),
-                        { $orderby: "PstDate desc,ProductionOrder desc" }
+                        { $orderby: "PstDate desc,ProductionOrder desc", $count: true }
                     );
-                    const aContexts = await oBinding.requestContexts(0, MAX_ROWS);
-                    const aRows = aContexts.map((c) => c.getObject());
+
+                    // 1. Lấy tổng số dòng theo filter trước khi tải
+                    await oBinding.requestContexts(0, 1);
+                    const iTotal =
+                        Number(await oBinding.getHeaderContext().requestProperty("$count")) || 0;
+
+                    if (iTotal === 0) {
+                        this._applyData([]);
+                        MessageToast.show("Không có dữ liệu theo bộ lọc");
+                        return;
+                    }
+                    if (iTotal > HARD_LIMIT) {
+                        this._applyData([]);
+                        MessageBox.warning(
+                            `Bộ lọc hiện tại trả về ${iTotal.toLocaleString("vi-VN")} dòng, vượt giới hạn ` +
+                            `${HARD_LIMIT.toLocaleString("vi-VN")} dòng của báo cáo trực tuyến. ` +
+                            `Vui lòng thu hẹp khoảng thời gian hoặc thêm điều kiện lọc.`
+                        );
+                        return;
+                    }
+
+                    // 2. Tải tuần tự từng trang đến hết
+                    const aRows = [];
+                    for (let iStart = 0; iStart < iTotal; iStart += PAGE_SIZE) {
+                        if (oBusy) {
+                            oBusy.setText(
+                                `Đang tải ${Math.min(iStart + PAGE_SIZE, iTotal).toLocaleString("vi-VN")}` +
+                                ` / ${iTotal.toLocaleString("vi-VN")} dòng...`
+                            );
+                        }
+                        const aCtx = await oBinding.requestContexts(
+                            iStart, Math.min(PAGE_SIZE, iTotal - iStart)
+                        );
+                        aCtx.forEach((c) => aRows.push(c.getObject()));
+                    }
 
                     this._applyData(aRows);
-
-                    if (aRows.length >= MAX_ROWS) {
-                        MessageBox.warning(
-                            `Kết quả vượt ${MAX_ROWS} dòng, dữ liệu đã bị cắt. Vui lòng thu hẹp bộ lọc.`
-                        );
-                    } else {
-                        MessageToast.show(`Đã tải ${aRows.length} lệnh sản xuất`);
-                    }
+                    MessageToast.show(`Đã tải ${aRows.length.toLocaleString("vi-VN")} lệnh sản xuất`);
                 } catch (e) {
                     MessageBox.error("Lỗi tải dữ liệu: " + (e.message || e));
                 } finally {
-                    if (oBusy) oBusy.close();
+                    if (oBusy) {
+                        oBusy.setText("Đang tải dữ liệu...");
+                        oBusy.close();
+                    }
                 }
             },
 

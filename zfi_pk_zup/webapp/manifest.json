@@ -33,14 +33,19 @@
           "odataVersion": "4.0"
         }
       },
-    "grService": {
-  "uri": "/sap/opu/odata4/sap/zmm_ui_pogr_o4/srvd/sap/zmm_ui_pogr_o4/0001/",
-  "type": "OData",
-  "settings": {
-    "annotations": [],
-    "odataVersion": "4.0"
-  }
-}
+      "grService": {
+        "uri": "/sap/opu/odata4/sap/zmm_ui_pogr_o4/srvd/sap/zmm_ui_pogr_o4/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      },
+      "rptService": {
+        "uri": "/sap/opu/odata4/sap/zup_ui_rpt_o4/srvd/sap/zup_ui_rpt/0001/",
+        "type": "OData",
+        "settings": { "annotations": [], "odataVersion": "4.0" }
+      }
     },
     "crossNavigation": {
       "inbounds": {
@@ -127,6 +132,16 @@
           "autoExpandSelect": true,
           "earlyRequests": false
         }
+      },
+      "rpt": {
+        "dataSource": "rptService",
+        "preload": false,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": false
+        }
       }
     },
     "resources": {
@@ -150,30 +165,22 @@
         {
           "name": "RouteMain",
           "pattern": ":?query:",
-          "target": [
-            "TargetMain"
-          ]
+          "target": ["TargetMain"]
         },
         {
           "name": "RouteFi",
           "pattern": "fi",
-          "target": [
-            "TargetFi"
-          ]
+          "target": ["TargetFi"]
         },
         {
           "name": "RoutePp",
           "pattern": "pp",
-          "target": [
-            "TargetPp"
-          ]
+          "target": ["TargetPp"]
         },
         {
           "name": "RouteGr",
           "pattern": "gr",
-          "target": [
-            "TargetGr"
-          ]
+          "target": ["TargetGr"]
         }
       ],
       "targets": {
@@ -204,7 +211,7 @@
           "clearControlAggregation": false,
           "viewId": "Gr",
           "viewName": "Gr"
-      }
+        }
       }
     },
     "rootView": {

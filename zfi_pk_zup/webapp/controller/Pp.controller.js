@@ -10,6 +10,7 @@ sap.ui.define(
     "./helper/ApiService",
     "./helper/ResultsDialog",
     "./xlsx/xlsx.bundle",
+    "./helper/HistoryDetailDialog",
   ],
   function (
     Controller,
@@ -21,6 +22,7 @@ sap.ui.define(
     ExcelParser,
     ApiService,
     ResultsDialog,
+    HistoryDetailDialog, // MỚI
   ) {
     "use strict";
 
@@ -137,6 +139,73 @@ sap.ui.define(
         } finally {
           this._closeBusy();
         }
+      },
+
+      onHistoryItemPress: function (oEvent) {
+        const oCtx = oEvent.getSource().getBindingContext("pp");
+        if (!oCtx) return;
+        const o = oCtx.getObject();
+        const oRptModel = this.getOwnerComponent().getModel("rpt");
+        const oView = this.getView();
+
+        sap.ui.require(
+          [
+            "zfipkzup/controller/helper/HistoryDetailDialog",
+            "sap/ui/model/Filter",
+            "sap/ui/model/FilterOperator",
+          ],
+          async function (HistoryDetailDialog, Filter, FilterOperator) {
+            // Lấy bản ghi đầy đủ (kèm OrderStatus/ReleaseDate) từ RPT
+            let oFull = o;
+            if (oRptModel && o.ProductionOrder) {
+              try {
+                const oBinding = oRptModel.bindList(
+                  "/PPUploadReport",
+                  null,
+                  [],
+                  [
+                    new Filter(
+                      "ProductionOrder",
+                      FilterOperator.EQ,
+                      o.ProductionOrder,
+                    ),
+                  ],
+                );
+                const aCtx = await oBinding.requestContexts(0, 1);
+                if (aCtx.length) oFull = aCtx[0].getObject();
+              } catch (e) {
+                /* fallback dữ liệu từ bảng */
+              }
+            }
+
+            HistoryDetailDialog.open({
+              view: oView,
+              title: "Chi tiết lệnh " + (oFull.ProductionOrder || ""),
+              record: oFull,
+              fields: [
+                { key: "IdDoc", label: "ID" },
+                { key: "ProductionOrder", label: "Production Order" },
+                { key: "OrderStatus", label: "Trạng thái" },
+                { key: "ReleaseDate", label: "Release Date", type: "date" },
+                { key: "ProductionPlant", label: "Plant" },
+                { key: "Material", label: "Material" },
+                { key: "ProductionOrderType", label: "Order Type" },
+                { key: "ProductionVersion", label: "Production Version" },
+                { key: "TotalQty", label: "Total Qty", type: "num" },
+                { key: "BaseUnit", label: "Unit" },
+                { key: "StartDate", label: "Start Date", type: "date" },
+                { key: "EndDate", label: "End Date", type: "date" },
+                { key: "LeadTimeDays", label: "Lead time (ngày)", type: "num" },
+                { key: "SalesOrder", label: "Sales Order" },
+                { key: "SalesOrderItem", label: "SO Item" },
+                { key: "Filename", label: "Filename" },
+                { key: "PstDate", label: "Ngày post", type: "date" },
+                { key: "PstUser", label: "Người post" },
+              ],
+              copy: { label: "Copy số lệnh", value: oFull.ProductionOrder },
+            });
+          },
+        );
       },
 
       /**

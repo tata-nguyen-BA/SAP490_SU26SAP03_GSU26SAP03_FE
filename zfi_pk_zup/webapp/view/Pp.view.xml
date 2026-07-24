@@ -205,7 +205,7 @@
                                 <Column id="_pphc8"><Text id="_ppht8" text="End Date" /></Column>
                             </columns>
                             <items>
-                                <ColumnListItem id="_pphcli">
+                                <ColumnListItem id="_pphcli" type="Navigation" press="onHistoryItemPress">
                                     <cells>
                                         <Text id="_pphcell1" text="{pp>IdDoc}" />
                                         <Text id="_pphcell2" text="{pp>ProductionOrder}" />
